@@ -7,6 +7,9 @@ mode_plot  =input_params.mode_plot;
 regionIdx  =input_params.regionIdx;
 error_mode =input_params.error_mode;
 plot_legend=input_params.plot_legend;
+
+lw=input_params.lw;
+
 if mode_plot==LEGEND_PLOT
     whichplot=[1,1,0,1];
     lw=[2,3,2,2];
@@ -15,25 +18,29 @@ if mode_plot==LEGEND_PLOT
     j_jumpers=BEST_JUMPERS.REGIONS{regionIdx};
 elseif mode_plot==THREE_PLOT
     whichplot=[1,1,0,1];
-    lw=[3,5,1,2];
     j_jumpers=BEST_JUMPERS.REGIONS{regionIdx};
 elseif mode_plot==DEATHS_PLOT
     whichplot=[0,0,0,1];
-    lw=[3,5,1,2];
+    j_jumpers=BEST_JUMPERS.REGIONS{regionIdx};
+elseif mode_plot==ACTIVES_PLOT
+    whichplot=[0,1,0,0];
+    j_jumpers=BEST_JUMPERS.REGIONS{regionIdx};
+elseif mode_plot==TOTALS_PLOT
+    whichplot=[1,0,0,0];
     j_jumpers=BEST_JUMPERS.REGIONS{regionIdx};
 elseif mode_plot==CHEATERS_PLOT
     whichplot=[0,0,0,0];
-    lw=[3,5,1,2];
     j_jumpers=0:100;
 end
 
-mk=cell(0,0);
-% mk='--';mk=':',mk='-'; mk='*'; mk='o';
-
-mk{end+1}='--';
-mk{end+1}=':';%mk{end+1}='-.';
-mk{end+1}='-';
-mk{end+1}='o';
+mk=input_params.mk;
+% mk=cell(0,0);
+% % mk='--';mk=':',mk='-'; mk='*'; mk='o';
+% 
+% mk{end+1}='--';
+% mk{end+1}=':';%mk{end+1}='-.';
+% mk{end+1}='-';
+% mk{end+1}='o';
 
 test_jump=1;
 % format_save='png';
@@ -137,18 +144,20 @@ for iter_j=1:length(j_jumpers)
 
     %% plot
     hfig=figure; hold on; box on; grid on;
-    cmaps=linspecer(4); h=[]; leg=cell(0,0);
+    cmaps=input_params.cmaps;%linspecer(4); 
+    ms=input_params.ms;
+    h=[]; leg=cell(0,0);
 
     % plot simulation
-    if whichplot(1); leg{end+1}= ['Total Cases (' getM1String ')'];     h(end+1)=plot(sDays,   sQ+sR+sD,mk{1},'color',cmaps(1,:),'linewidth',lw(1)); end;
-    if whichplot(2); leg{end+1}= ['Active Cases (' getM1String ')'];    h(end+1)=plot(sDays,         sQ,mk{1},'color',cmaps(2,:),'linewidth',lw(1)); end;
-    if whichplot(3); leg{end+1}= ['Total Recovered (' getM1String ')']; h(end+1)=plot(sDays,         sR,mk{1},'color',cmaps(3,:),'linewidth',lw(1)); end;
-    if whichplot(4); leg{end+1}= ['Deaths (' getM1String ')'];          h(end+1)=plot(sDays,         sD,mk{1},'color',cmaps(4,:),'linewidth',lw(1)); end;
+    if whichplot(1); leg{end+1}= ['Total Cases (' getM1String ')'];     h(end+1)=plot(sDays,   sQ+sR+sD,mk{1},'color',cmaps{1}(1,:),'linewidth',lw(1)); end;
+    if whichplot(2); leg{end+1}= ['Active Cases (' getM1String ')'];    h(end+1)=plot(sDays,         sQ,mk{1},'color',cmaps{1}(2,:),'linewidth',lw(1)); end;
+    if whichplot(3); leg{end+1}= ['Total Recovered (' getM1String ')']; h(end+1)=plot(sDays,         sR,mk{1},'color',cmaps{1}(3,:),'linewidth',lw(1)); end;
+    if whichplot(4); leg{end+1}= ['Deaths (' getM1String ')'];          h(end+1)=plot(sDays,         sD,mk{1},'color',cmaps{1}(4,:),'linewidth',lw(1)); end;
     if j_jumpers>0
-        if whichplot(1);leg{end+1}= ['Total Cases (' getM2String ')'];    h(end+1)=plot(sDaysJ,sQJ+sRJ+sDJ,mk{2},'color',cmaps(1,:),'linewidth',lw(2)); end;
-        if whichplot(2);leg{end+1}= ['Active Cases (' getM2String ')'];   h(end+1)=plot(sDaysJ,        sQJ,mk{2},'color',cmaps(2,:),'linewidth',lw(2)); end;
-        if whichplot(3);leg{end+1}= ['Total Recovered (' getM2String ')'];h(end+1)=plot(sDaysJ,        sRJ,mk{2},'color',cmaps(3,:),'linewidth',lw(2)); end;
-        if whichplot(4);leg{end+1}= ['Deaths (' getM2String ')'];         h(end+1)=plot(sDaysJ,        sDJ,mk{2},'color',cmaps(4,:),'linewidth',lw(2)); end;
+        if whichplot(1);leg{end+1}= ['Total Cases (' getM2String ')'];    h(end+1)=plot(sDaysJ,sQJ+sRJ+sDJ,mk{2},'color',cmaps{2}(1,:),'linewidth',lw(2)); end;
+        if whichplot(2);leg{end+1}= ['Active Cases (' getM2String ')'];   h(end+1)=plot(sDaysJ,        sQJ,mk{2},'color',cmaps{2}(2,:),'linewidth',lw(2)); end;
+        if whichplot(3);leg{end+1}= ['Total Recovered (' getM2String ')'];h(end+1)=plot(sDaysJ,        sRJ,mk{2},'color',cmaps{2}(3,:),'linewidth',lw(2)); end;
+        if whichplot(4);leg{end+1}= ['Deaths (' getM2String ')'];         h(end+1)=plot(sDaysJ,        sDJ,mk{2},'color',cmaps{2}(4,:),'linewidth',lw(2)); end;
     end
 
     %% Ground truth simulation
@@ -179,10 +188,10 @@ for iter_j=1:length(j_jumpers)
     %% end ground truth simulation
 
 
-    if whichplot(1); leg{end+1}= ['Total Cases (' getM3String ')'];    h(end+1)=plot(sDaysALL,sQALL+sRALL+sDALL,'LineStyle',mk{3},'color',cmaps(1,:),'linewidth',lw(3)); end;
-    if whichplot(2); leg{end+1}= ['Active Cases (' getM3String ')'];   h(end+1)=plot(sDaysALL,            sQALL,'LineStyle',mk{3},'color',cmaps(2,:),'linewidth',lw(3)); end;
-    if whichplot(3); leg{end+1}= ['Total Recovered (' getM3String ')'];h(end+1)=plot(sDaysALL,            sRALL,'LineStyle',mk{3},'color',cmaps(3,:),'linewidth',lw(3)); end;
-    if whichplot(4); leg{end+1}= ['Deaths (' getM3String ')'];         h(end+1)=plot(sDaysALL,            sDALL,'LineStyle',mk{3},'color',cmaps(4,:),'linewidth',lw(3)); end;
+    if whichplot(1); leg{end+1}= ['Total Cases (' getM3String ')'];    h(end+1)=plot(sDaysALL,sQALL+sRALL+sDALL,'LineStyle',mk{3},'color',cmaps{3}(1,:),'linewidth',lw(3)); end;
+    if whichplot(2); leg{end+1}= ['Active Cases (' getM3String ')'];   h(end+1)=plot(sDaysALL,            sQALL,'LineStyle',mk{3},'color',cmaps{3}(2,:),'linewidth',lw(3)); end;
+    if whichplot(3); leg{end+1}= ['Total Recovered (' getM3String ')'];h(end+1)=plot(sDaysALL,            sRALL,'LineStyle',mk{3},'color',cmaps{3}(3,:),'linewidth',lw(3)); end;
+    if whichplot(4); leg{end+1}= ['Deaths (' getM3String ')'];         h(end+1)=plot(sDaysALL,            sDALL,'LineStyle',mk{3},'color',cmaps{3}(4,:),'linewidth',lw(3)); end;
     % 
 
 
@@ -198,10 +207,10 @@ for iter_j=1:length(j_jumpers)
 
         timeplot=datetime(sim_struct.time(data_start:end));
 
-        if whichplot(1); leg2{end+1}= 'Total Cases (data)';    hd(end+1)=plot(timeplot,  sim_struct.Confirmed(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps(1,:),'linewidth',lw(4)); end;
-        if whichplot(2); leg2{end+1}= 'Active Cases (data)';   hd(end+1)=plot(timeplot,sim_struct.Quarantined(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps(2,:),'linewidth',lw(4)); end;
-        if whichplot(3); leg2{end+1}= 'Total Recovered (data)';hd(end+1)=plot(timeplot,  sim_struct.Recovered(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps(3,:),'linewidth',lw(4)); end;
-        if whichplot(4); leg2{end+1}= 'Deaths (data)';         hd(end+1)=plot(timeplot,     sim_struct.Deaths(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps(4,:),'linewidth',lw(4)); end;
+        if whichplot(1); leg2{end+1}= 'Total Cases (data)';    hd(end+1)=plot(timeplot,  sim_struct.Confirmed(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps{4}(1,:),'linewidth',lw(4),'markersize',ms(4)); end;
+        if whichplot(2); leg2{end+1}= 'Active Cases (data)';   hd(end+1)=plot(timeplot,sim_struct.Quarantined(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps{4}(2,:),'linewidth',lw(4),'markersize',ms(4)); end;
+        if whichplot(3); leg2{end+1}= 'Total Recovered (data)';hd(end+1)=plot(timeplot,  sim_struct.Recovered(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps{4}(3,:),'linewidth',lw(4),'markersize',ms(4)); end;
+        if whichplot(4); leg2{end+1}= 'Deaths (data)';         hd(end+1)=plot(timeplot,     sim_struct.Deaths(regionIdx,data_start:end),'LineStyle','none','Marker',mk{4},'color',cmaps{4}(4,:),'linewidth',lw(4),'markersize',ms(4)); end;
         hax=get(gca);
 
         hl1=plot(datetime([sim_struct.time(1),sim_struct.time(1)]),hax.YLim,'k-');
@@ -227,7 +236,7 @@ for iter_j=1:length(j_jumpers)
     set(gca,'Xtick',timeplot(hmstart+hmshift):hmtick:stime(end));
     set(gca,'XLim',[timeplot(hmstart),stime(end)]);
     % set(gca,'XTickLabelRotation',45);
-    p=[0,0,3000,600];
+    p=input_params.p;
     fs=16; 
     if ifsave
         fs=23;
@@ -299,17 +308,18 @@ for iter_j=1:length(j_jumpers)
             plot(ERROR_CORRECT(inds,1),smooth(ERROR_CORRECT(inds,2)),'k-','linewidth',2)
             title(tlabel);
             xlabel('Novel Active Cases');
-            ylabel('NMSE')
-            optionsPlot(hfig);
+            ylabel('NMSE')            
+            set(gca, 'YScale', 'log')
             p=[0,0,1500,600];
             set(gca,'fontsize',fs);
             set(hfig,'visible','off');
             set(hfig, 'PaperPositionMode','auto');
             set(hfig,'Position',p);
+            
         else 
             close all;
         end
-        val=min(ERROR_CORRECT,2);
+%         val=min(ERROR_CORRECT,2);
         
     end
 
@@ -317,23 +327,35 @@ for iter_j=1:length(j_jumpers)
         if mode_plot==DEATHS_PLOT
             nf=['Cheaters_' sim_struct.Regions{regionIdx} '_Deaths_J' num2str(jumpers)];
             fprintf('Saving %s\n',nf);
-
             print(hfig,['-d' format_save],[SAVE_DIR,nf]);
             savefig(hfig,[SAVE_DIR,nf]);
         elseif mode_plot==THREE_PLOT
             nf=['Cheaters_' sim_struct.Regions{regionIdx} '_J' num2str(jumpers)];
+            fprintf('Saving %s\n',nf);
+            print(hfig,['-d' format_save],[SAVE_DIR,nf]);
+            savefig(hfig,[SAVE_DIR,nf]);
+        elseif mode_plot==ACTIVES_PLOT
+            nf=['Cheaters_' sim_struct.Regions{regionIdx} '_Actives_J' num2str(jumpers)];
+            fprintf('Saving %s\n',nf);
+            print(hfig,['-d' format_save],[SAVE_DIR,nf]);
+            savefig(hfig,[SAVE_DIR,nf]);
+        elseif mode_plot==TOTALS_PLOT
+            nf=['Cheaters_' sim_struct.Regions{regionIdx} '_Totals_J' num2str(jumpers)];
+            fprintf('Saving %s\n',nf);
             print(hfig,['-d' format_save],[SAVE_DIR,nf]);
             savefig(hfig,[SAVE_DIR,nf]);
         elseif mode_plot==LEGEND_PLOT
             %% save only the legend
         %     lw=[1,1,2,2];whichplot=[1,1,0,1];
-            nf=[sim_struct.Regions{regionIdx} '_Legend']; 
+            nf=[sim_struct.Regions{regionIdx} '_Legend'];
+            fprintf('Saving %s\n',nf);
             saveLegendToImage(hfig, hfig.Children(1), nf, format_save); 
             saveLegendToImage(hfig, hfig.Children(1), nf, 'fig');
-        elseif mode_plot==CHEATERS_PLOT
+        elseif mode_plot==CHEATERS_PLOT && iter_j==length(j_jumpers)
         %% plot errors
         %% THE CORRECT PATH
             nf=['Cheaters_' sim_struct.Regions{regionIdx} '_RMSE'];
+            fprintf('Saving %s\n',nf);
             print(hfig,['-d' format_save],[SAVE_DIR,nf]);
             savefig(hfig,[SAVE_DIR,nf]);
         end
